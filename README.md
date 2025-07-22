@@ -2,7 +2,7 @@
 
 A comprehensive full-stack task management solution with a RESTful API backend and a clean, responsive frontend.
 
-![Task Management Dashboard](https://raw.githubusercontent.com/syaddays/task-manager-api/main/screenshots/dashboard.png)
+![Task Management Dashboard](screenshots/dashboard.png)
 
 ## 🚀 Features
 
@@ -83,10 +83,10 @@ Or
 ## 📱 Screenshots
 
 ### Task Dashboard
-![Task Dashboard](https://raw.githubusercontent.com/syaddays/task-manager-api/main/screenshots/dashboard.png)
+![Task Dashboard](screenshots/dashboard.png)
 
 ### Task Creation
-![Task Creation](https://raw.githubusercontent.com/syaddays/task-manager-api/main/screenshots/create-task.png)
+![Task Creation](screenshots/create-task.png)
 
 ## 🛑 Stopping the Servers
 
