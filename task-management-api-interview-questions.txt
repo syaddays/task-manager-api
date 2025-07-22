@@ -1,0 +1,276 @@
+# TASK MANAGEMENT API - TECHNICAL INTERVIEW QUESTIONS AND PROJECT DETAILS
+
+## PROJECT OVERVIEW
+
+The Task Management API is a RESTful web service built with Spring Boot that allows users to create, manage, and organize tasks. The system supports user authentication, task categorization, and role-based access control.
+
+### Key Features
+- User authentication and authorization with JWT
+- Task creation, retrieval, updating, and deletion
+- Task categorization and organization
+- Role-based access control
+- Database persistence with PostgreSQL
+- RESTful API design
+
+## DATABASE DESIGN
+
+### Database Schema
+- **users**: Stores user information (id, username, email, password, first_name, last_name)
+- **roles**: Defines user roles (id, name, description)
+- **user_roles**: Junction table for many-to-many relationship between users and roles
+- **categories**: Stores task categories (id, name, description, color, user_id)
+- **tasks**: Stores task information (id, title, description, status, priority, due_date, category_id, user_id)
+
+### Relationships
+- One-to-Many: User to Tasks
+- One-to-Many: User to Categories
+- One-to-Many: Category to Tasks
+- Many-to-Many: User to Roles
+
+## TECHNICAL INTERVIEW QUESTIONS
+
+### Spring Boot & Spring Framework
+
+1. **What is Spring Boot and how does it differ from the core Spring Framework?**
+   - Spring Boot is an extension of Spring Framework that simplifies configuration with auto-configuration and embedded servers
+   - It reduces boilerplate code through "starters" and convention over configuration
+
+2. **Explain the concept of Dependency Injection in Spring.**
+   - DI is a design pattern where objects receive their dependencies rather than creating them
+   - Spring manages dependencies through ApplicationContext and injects them via constructors, setters, or fields
+   - Our project uses constructor injection with @RequiredArgsConstructor from Lombok
+
+3. **What are Spring Boot Starters? Which ones are used in this project?**
+   - Starters are dependency descriptors that simplify dependency management
+   - Our project uses: spring-boot-starter-web, spring-boot-starter-data-jpa, spring-boot-starter-security
+
+4. **Explain the Spring MVC architecture used in this project.**
+   - Controllers handle HTTP requests (@RestController)
+   - Services contain business logic (@Service)
+   - Repositories handle data access (@Repository)
+   - Models/Entities represent data (@Entity)
+
+### Database & JPA
+
+5. **How does Spring Data JPA simplify database operations?**
+   - Provides repository interfaces that automatically implement common CRUD operations
+   - Supports method name queries, JPQL, native queries, and specifications
+   - Handles transaction management and connection pooling
+
+6. **Explain the entity relationships in this project.**
+   - User has many Tasks (One-to-Many)
+   - User has many Categories (One-to-Many)
+   - Category has many Tasks (One-to-Many)
+   - User has many Roles (Many-to-Many)
+
+7. **What is the purpose of the @Transactional annotation in our service classes?**
+   - Manages database transactions
+   - Ensures operations are atomic, consistent, isolated, and durable (ACID)
+   - Handles rollback on exceptions
+
+8. **How are database migrations managed in this project?**
+   - Using Flyway for version-controlled schema migrations
+   - Migration scripts in src/main/resources/db/migration
+   - Automatic execution of migrations on application startup
+
+### Security
+
+9. **Explain the JWT authentication flow in this application.**
+   - User provides credentials (username/password)
+   - Server validates credentials and generates JWT token
+   - Client includes token in Authorization header for subsequent requests
+   - JwtAuthenticationFilter validates tokens and sets SecurityContext
+
+10. **What is the purpose of the JwtTokenProvider class?**
+    - Generates JWT tokens for authentication
+    - Validates tokens
+    - Extracts user information from tokens
+    - Manages refresh tokens
+
+11. **How is password security handled in this application?**
+    - Passwords are hashed using BCrypt
+    - PasswordEncoder bean is configured in SecurityConfig
+    - Passwords are never stored in plain text
+
+12. **Explain the role-based access control implementation.**
+    - Users have roles (ROLE_USER, ROLE_ADMIN)
+    - @PreAuthorize annotations restrict access to endpoints
+    - SecurityConfig configures authorization rules
+
+### API Design
+
+13. **What RESTful principles are followed in this API design?**
+    - Resource-based URLs (/api/tasks, /api/categories)
+    - Appropriate HTTP methods (GET, POST, PUT, DELETE)
+    - Stateless communication
+    - Consistent error handling
+
+14. **Explain the DTO pattern used in this application.**
+    - Data Transfer Objects separate API contracts from internal entities
+    - Request DTOs handle input validation
+    - Response DTOs control what data is exposed to clients
+    - Prevents direct entity exposure and circular references
+
+15. **How is error handling implemented in the API?**
+    - Global exception handler with @ControllerAdvice
+    - Custom exceptions for different error scenarios
+    - Consistent error response format
+
+16. **How is API documentation handled?**
+    - OpenAPI/Swagger for API documentation
+    - Annotations on controllers and DTOs
+    - Interactive documentation UI available at /swagger-ui.html
+
+### Architecture & Design Patterns
+
+17. **Explain the layered architecture of this application.**
+    - Controller layer: Handles HTTP requests and responses
+    - Service layer: Contains business logic
+    - Repository layer: Handles data access
+    - Entity layer: Represents database models
+
+18. **What design patterns are used in this project?**
+    - Repository Pattern for data access
+    - DTO Pattern for API contracts
+    - Builder Pattern (via Lombok) for object creation
+    - Dependency Injection for loose coupling
+
+19. **How is separation of concerns maintained in this project?**
+    - Clear responsibilities for each layer
+    - Business logic isolated in service classes
+    - Data access logic in repositories
+    - Presentation logic in controllers
+
+### Testing
+
+20. **What testing strategies would you implement for this project?**
+    - Unit tests for service and repository layers
+    - Integration tests for API endpoints
+    - Security tests for authentication and authorization
+    - Performance tests for API response times
+
+21. **How would you test the JWT authentication mechanism?**
+    - Unit tests for JwtTokenProvider
+    - Integration tests for authentication endpoints
+    - Security tests with different roles and permissions
+
+### Deployment & DevOps
+
+22. **How would you deploy this application to production?**
+    - Containerization with Docker
+    - CI/CD pipeline with GitHub Actions or Jenkins
+    - Deployment to cloud platforms (AWS, Azure, GCP)
+    - Environment-specific configuration
+
+23. **How would you handle database migrations in a production environment?**
+    - Flyway for automated, version-controlled migrations
+    - Test migrations in staging environment
+    - Backup database before migrations
+    - Rollback plan for failed migrations
+
+### Performance & Scalability
+
+24. **How would you optimize the performance of this application?**
+    - Database indexing (already implemented on key columns)
+    - Connection pooling
+    - Caching frequently accessed data
+    - Pagination for large result sets
+
+25. **How would you make this application scalable?**
+    - Stateless design for horizontal scaling
+    - Database sharding for large datasets
+    - Load balancing across multiple instances
+    - Microservices architecture for larger systems
+
+## TECHNICAL IMPLEMENTATION DETAILS
+
+### Key Classes and Their Responsibilities
+
+1. **Entity Classes**
+   - User: Represents user information and relationships
+   - Task: Represents task data and status
+   - Category: Represents task categories
+   - Role: Represents user roles
+
+2. **Repository Interfaces**
+   - UserRepository: User data access
+   - TaskRepository: Task data access with custom queries
+   - CategoryRepository: Category data access
+   - RoleRepository: Role data access
+
+3. **Service Classes**
+   - UserService: User management logic
+   - TaskService: Task management logic
+   - CategoryService: Category management logic
+   - AuthService: Authentication and authorization logic
+
+4. **Security Classes**
+   - JwtTokenProvider: JWT token generation and validation
+   - JwtAuthenticationFilter: Request filter for JWT authentication
+   - SecurityConfig: Security configuration
+   - UserDetailsServiceImpl: Custom user details service
+
+5. **Controllers**
+   - AuthController: Authentication endpoints
+   - TaskController: Task management endpoints
+   - CategoryController: Category management endpoints
+   - UserController: User management endpoints
+
+### API Endpoints
+
+1. **Authentication**
+   - POST /api/auth/login: Authenticate user
+   - POST /api/auth/register: Register new user
+   - POST /api/auth/refresh: Refresh JWT token
+   - POST /api/auth/logout: Invalidate refresh token
+
+2. **Tasks**
+   - GET /api/tasks: Get all tasks for current user
+   - GET /api/tasks/{id}: Get task by ID
+   - POST /api/tasks: Create new task
+   - PUT /api/tasks/{id}: Update task
+   - DELETE /api/tasks/{id}: Delete task
+   - PUT /api/tasks/{id}/status: Update task status
+
+3. **Categories**
+   - GET /api/categories: Get all categories for current user
+   - GET /api/categories/{id}: Get category by ID
+   - POST /api/categories: Create new category
+   - PUT /api/categories/{id}: Update category
+   - DELETE /api/categories/{id}: Delete category
+
+4. **Users**
+   - GET /api/users/me: Get current user profile
+   - PUT /api/users/me: Update current user profile
+
+### Database Configuration
+
+The application uses PostgreSQL with the following configuration:
+- Database name: taskmanagement
+- Connection URL: jdbc:postgresql://localhost:5432/taskmanagement
+- Username: postgres
+- Password: postgres
+
+### Security Configuration
+
+- JWT token expiration: 24 hours (86400000 ms)
+- Refresh token expiration: 7 days (604800000 ms)
+- Password encoding: BCrypt
+- CORS configuration: Allows requests from http://localhost:3000
+
+## TECHNICAL CHALLENGES AND SOLUTIONS
+
+1. **Challenge**: Ensuring user data isolation
+   **Solution**: Implemented user-specific queries with userId filtering
+
+2. **Challenge**: Secure authentication
+   **Solution**: JWT with refresh tokens and proper token validation
+
+3. **Challenge**: Database schema evolution
+   **Solution**: Flyway migrations for version-controlled schema changes
+
+4. **Challenge**: API consistency
+   **Solution**: DTO pattern and global exception handling
+
+5. **Challenge**: Performance with large datasets
+   **Solution**: Pagination, indexing, and optimized queries 

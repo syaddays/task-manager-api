@@ -1,0 +1,3 @@
+@echo off
+echo Opening Task Management Frontend in your default browser...
+start http://localhost:3000 

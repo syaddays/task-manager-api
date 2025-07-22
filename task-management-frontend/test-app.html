@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App.js Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .test-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .test-button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            min-height: 50px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>App.js Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Categories Array Handling</h2>
+        <button id="test-categories-array" class="test-button">Test Categories Array</button>
+        <button id="test-categories-object" class="test-button">Test Categories Object</button>
+        <button id="test-categories-null" class="test-button">Test Categories Null</button>
+        <div id="categories-result" class="result">Results will appear here...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Tasks Array Handling</h2>
+        <button id="test-tasks-array" class="test-button">Test Tasks Array</button>
+        <button id="test-tasks-object" class="test-button">Test Tasks Object</button>
+        <button id="test-tasks-null" class="test-button">Test Tasks Null</button>
+        <div id="tasks-result" class="result">Results will appear here...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Category Finding</h2>
+        <button id="test-find-category" class="test-button">Test Find Category</button>
+        <div id="find-result" class="result">Results will appear here...</div>
+    </div>
+    
+    <script>
+        // Mock the app.js functions we need to test
+        const API_URL = 'http://localhost:9000';
+        let categories = [];
+        let tasks = [];
+        let currentCategoryId = null;
+        let currentStatusFilter = 'ALL';
+        let currentPriorityFilter = 'ALL';
+        
+        // Mock DOM elements
+        const categoriesList = { innerHTML: '' };
+        const tasksList = { innerHTML: '' };
+        
+        // Import the functions from app.js
+        async function fetchCategories() {
+            try {
+                const response = await fetch(`${API_URL}/api/categories`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                
+                const data = await response.json();
+                // Ensure categories is always an array
+                categories = Array.isArray(data) ? data : [];
+                return categories;
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+                return [];
+            }
+        }
+        
+        async function fetchTasks() {
+            try {
+                const response = await fetch(`${API_URL}/api/tasks`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tasks');
+                }
+                
+                const data = await response.json();
+                // Ensure tasks is always an array
+                tasks = Array.isArray(data) ? data : [];
+                return tasks;
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+                return [];
+            }
+        }
+        
+        function renderCategories() {
+            // Ensure categories is an array
+            if (!Array.isArray(categories)) {
+                console.error('Categories is not an array:', categories);
+                categoriesList.innerHTML = '<li class="error">Error loading categories</li>';
+                return false;
+            }
+            
+            // Test forEach
+            try {
+                categories.forEach(category => {
+                    if (!category) return; // Skip null/undefined categories
+                });
+                return true;
+            } catch (error) {
+                console.error('Error in renderCategories:', error);
+                return false;
+            }
+        }
+        
+        function renderTasks() {
+            // Ensure tasks is an array
+            if (!Array.isArray(tasks)) {
+                console.error('Tasks is not an array:', tasks);
+                tasksList.innerHTML = '<p class="no-tasks">Error: Invalid tasks data.</p>';
+                return false;
+            }
+            
+            // Test filter and forEach
+            try {
+                const filteredTasks = tasks.filter(task => {
+                    const statusMatch = currentStatusFilter === 'ALL' || task.status === currentStatusFilter;
+                    const priorityMatch = currentPriorityFilter === 'ALL' || task.priority === currentPriorityFilter;
+                    return statusMatch && priorityMatch;
+                });
+                
+                filteredTasks.forEach(task => {
+                    // Safely find category
+                    let categoryName = 'No Category';
+                    if (Array.isArray(categories)) {
+                        const category = categories.find(cat => cat && cat.id === task.categoryId);
+                        if (category) categoryName = category.name;
+                    }
+                });
+                return true;
+            } catch (error) {
+                console.error('Error in renderTasks:', error);
+                return false;
+            }
+        }
+        
+        // Test functions
+        document.getElementById('test-categories-array').addEventListener('click', async () => {
+            const result = document.getElementById('categories-result');
+            
+            // Mock categories as an array
+            categories = [
+                { id: 1, name: 'Work', color: '#ff0000' },
+                { id: 2, name: 'Personal', color: '#00ff00' }
+            ];
+            
+            try {
+                const success = renderCategories();
+                if (success) {
+                    result.innerHTML = `<div class="success">
+                        <p>✅ Success! Categories rendered correctly as an array.</p>
+                        <p>Categories: ${JSON.stringify(categories)}</p>
+                    </div>`;
+                } else {
+                    result.innerHTML = `<div class="error">
+                        <p>❌ Failed to render categories.</p>
+                    </div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-categories-object').addEventListener('click', async () => {
+            const result = document.getElementById('categories-result');
+            
+            // Mock categories as an object (not an array)
+            categories = { id: 1, name: 'Work', color: '#ff0000' };
+            
+            try {
+                const success = renderCategories();
+                result.innerHTML = `<div class="${success ? 'success' : 'error'}">
+                    <p>${success ? '✅ Success! Categories handled correctly when not an array.' : '❌ Failed to handle non-array categories.'}</p>
+                    <p>Categories: ${JSON.stringify(categories)}</p>
+                </div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-categories-null').addEventListener('click', async () => {
+            const result = document.getElementById('categories-result');
+            
+            // Mock categories as null
+            categories = null;
+            
+            try {
+                const success = renderCategories();
+                result.innerHTML = `<div class="${success ? 'success' : 'error'}">
+                    <p>${success ? '✅ Success! Categories handled correctly when null.' : '❌ Failed to handle null categories.'}</p>
+                    <p>Categories: ${categories}</p>
+                </div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-tasks-array').addEventListener('click', async () => {
+            const result = document.getElementById('tasks-result');
+            
+            // Mock tasks as an array
+            tasks = [
+                { id: 1, title: 'Task 1', description: 'Description 1', status: 'PENDING', priority: 'HIGH', categoryId: 1 },
+                { id: 2, title: 'Task 2', description: 'Description 2', status: 'IN_PROGRESS', priority: 'MEDIUM', categoryId: 2 }
+            ];
+            
+            // Mock categories
+            categories = [
+                { id: 1, name: 'Work', color: '#ff0000' },
+                { id: 2, name: 'Personal', color: '#00ff00' }
+            ];
+            
+            try {
+                const success = renderTasks();
+                if (success) {
+                    result.innerHTML = `<div class="success">
+                        <p>✅ Success! Tasks rendered correctly as an array.</p>
+                        <p>Tasks: ${JSON.stringify(tasks)}</p>
+                    </div>`;
+                } else {
+                    result.innerHTML = `<div class="error">
+                        <p>❌ Failed to render tasks.</p>
+                    </div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-tasks-object').addEventListener('click', async () => {
+            const result = document.getElementById('tasks-result');
+            
+            // Mock tasks as an object (not an array)
+            tasks = { id: 1, title: 'Task 1', description: 'Description 1', status: 'PENDING', priority: 'HIGH', categoryId: 1 };
+            
+            try {
+                const success = renderTasks();
+                result.innerHTML = `<div class="${success ? 'success' : 'error'}">
+                    <p>${success ? '✅ Success! Tasks handled correctly when not an array.' : '❌ Failed to handle non-array tasks.'}</p>
+                    <p>Tasks: ${JSON.stringify(tasks)}</p>
+                </div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-tasks-null').addEventListener('click', async () => {
+            const result = document.getElementById('tasks-result');
+            
+            // Mock tasks as null
+            tasks = null;
+            
+            try {
+                const success = renderTasks();
+                result.innerHTML = `<div class="${success ? 'success' : 'error'}">
+                    <p>${success ? '✅ Success! Tasks handled correctly when null.' : '❌ Failed to handle null tasks.'}</p>
+                    <p>Tasks: ${tasks}</p>
+                </div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="error">
+                    <p>❌ Error: ${error.message}</p>
+                    <p>Stack: ${error.stack}</p>
+                </div>`;
+            }
+        });
+        
+        document.getElementById('test-find-category').addEventListener('click', async () => {
+            const result = document.getElementById('find-result');
+            
+            // Test various scenarios
+            const testScenarios = [
+                {
+                    name: "Normal array with matching category",
+                    categories: [{ id: 1, name: "Work" }, { id: 2, name: "Personal" }],
+                    task: { categoryId: 1 },
+                    expected: "Work"
+                },
+                {
+                    name: "Normal array without matching category",
+                    categories: [{ id: 1, name: "Work" }, { id: 2, name: "Personal" }],
+                    task: { categoryId: 3 },
+                    expected: "No Category"
+                },
+                {
+                    name: "Empty array",
+                    categories: [],
+                    task: { categoryId: 1 },
+                    expected: "No Category"
+                },
+                {
+                    name: "Categories is not an array",
+                    categories: { id: 1, name: "Work" },
+                    task: { categoryId: 1 },
+                    expected: "No Category"
+                },
+                {
+                    name: "Categories is null",
+                    categories: null,
+                    task: { categoryId: 1 },
+                    expected: "No Category"
+                },
+                {
+                    name: "Categories contains null items",
+                    categories: [null, { id: 2, name: "Personal" }],
+                    task: { categoryId: 2 },
+                    expected: "Personal"
+                }
+            ];
+            
+            let html = '<h3>Category Finding Test Results:</h3>';
+            let allPassed = true;
+            
+            testScenarios.forEach(scenario => {
+                categories = scenario.categories;
+                const task = scenario.task;
+                
+                let categoryName = 'No Category';
+                try {
+                    if (Array.isArray(categories)) {
+                        const category = categories.find(cat => cat && cat.id === task.categoryId);
+                        if (category) categoryName = category.name;
+                    }
+                    
+                    const passed = categoryName === scenario.expected;
+                    if (!passed) allPassed = false;
+                    
+                    html += `<p>${passed ? '✅' : '❌'} ${scenario.name}: Got "${categoryName}", Expected "${scenario.expected}"</p>`;
+                } catch (error) {
+                    allPassed = false;
+                    html += `<p>❌ ${scenario.name}: Error - ${error.message}</p>`;
+                }
+            });
+            
+            html = `<div class="${allPassed ? 'success' : 'error'}">` + html + '</div>';
+            result.innerHTML = html;
+        });
+    </script>
+</body>
+</html> 

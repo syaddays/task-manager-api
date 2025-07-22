@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User-Specific Data Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .user-panel {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .login-form {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .task-form {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .task-list {
+            margin-top: 20px;
+        }
+        .task-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-left-width: 5px;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .task-description {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .priority-low {
+            border-left-color: #8BC34A;
+        }
+        .priority-medium {
+            border-left-color: #FF9800;
+        }
+        .priority-high {
+            border-left-color: #F44336;
+        }
+        .user-info {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .user-name {
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            background-color: #ffeeee;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .success {
+            color: green;
+            padding: 10px;
+            background-color: #eeffee;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User-Specific Data Test</h1>
+    <p>This page demonstrates that different users see different tasks. Login with different users in each panel to see their specific tasks.</p>
+    
+    <div class="container">
+        <!-- User 1 Panel -->
+        <div class="user-panel">
+            <h2>User 1</h2>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="username1">Username:</label>
+                    <input type="text" id="username1" value="testuser">
+                </div>
+                <div class="form-group">
+                    <label for="password1">Password:</label>
+                    <input type="password" id="password1" value="password123">
+                </div>
+                <button id="login1">Login</button>
+            </div>
+            
+            <div id="user-info1" class="user-info" style="display: none;">
+                Logged in as: <span id="user-name1" class="user-name"></span>
+                <button id="logout1" style="float: right; background-color: #f44336;">Logout</button>
+            </div>
+            
+            <div id="task-form1" class="task-form" style="display: none;">
+                <h3>Create Task</h3>
+                <div class="form-group">
+                    <label for="task-title1">Title:</label>
+                    <input type="text" id="task-title1" placeholder="Task title">
+                </div>
+                <div class="form-group">
+                    <label for="task-priority1">Priority:</label>
+                    <select id="task-priority1" style="width: 100%; padding: 8px;">
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM" selected>Medium</option>
+                        <option value="HIGH">High</option>
+                    </select>
+                </div>
+                <button id="create-task1">Create Task</button>
+            </div>
+            
+            <div id="result1"></div>
+            
+            <div id="task-list1" class="task-list">
+                <p>Login to see tasks...</p>
+            </div>
+        </div>
+        
+        <!-- User 2 Panel -->
+        <div class="user-panel">
+            <h2>User 2</h2>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="username2">Username:</label>
+                    <input type="text" id="username2" value="syad">
+                </div>
+                <div class="form-group">
+                    <label for="password2">Password:</label>
+                    <input type="password" id="password2" value="Syad12345">
+                </div>
+                <button id="login2">Login</button>
+            </div>
+            
+            <div id="user-info2" class="user-info" style="display: none;">
+                Logged in as: <span id="user-name2" class="user-name"></span>
+                <button id="logout2" style="float: right; background-color: #f44336;">Logout</button>
+            </div>
+            
+            <div id="task-form2" class="task-form" style="display: none;">
+                <h3>Create Task</h3>
+                <div class="form-group">
+                    <label for="task-title2">Title:</label>
+                    <input type="text" id="task-title2" placeholder="Task title">
+                </div>
+                <div class="form-group">
+                    <label for="task-priority2">Priority:</label>
+                    <select id="task-priority2" style="width: 100%; padding: 8px;">
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM" selected>Medium</option>
+                        <option value="HIGH">High</option>
+                    </select>
+                </div>
+                <button id="create-task2">Create Task</button>
+            </div>
+            
+            <div id="result2"></div>
+            
+            <div id="task-list2" class="task-list">
+                <p>Login to see tasks...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // API Base URL
+        const API_URL = 'http://localhost:9000';
+        
+        // User 1 elements
+        const username1 = document.getElementById('username1');
+        const password1 = document.getElementById('password1');
+        const loginBtn1 = document.getElementById('login1');
+        const logoutBtn1 = document.getElementById('logout1');
+        const userInfo1 = document.getElementById('user-info1');
+        const userName1 = document.getElementById('user-name1');
+        const taskForm1 = document.getElementById('task-form1');
+        const taskTitle1 = document.getElementById('task-title1');
+        const taskPriority1 = document.getElementById('task-priority1');
+        const createTaskBtn1 = document.getElementById('create-task1');
+        const result1 = document.getElementById('result1');
+        const taskList1 = document.getElementById('task-list1');
+        
+        // User 2 elements
+        const username2 = document.getElementById('username2');
+        const password2 = document.getElementById('password2');
+        const loginBtn2 = document.getElementById('login2');
+        const logoutBtn2 = document.getElementById('logout2');
+        const userInfo2 = document.getElementById('user-info2');
+        const userName2 = document.getElementById('user-name2');
+        const taskForm2 = document.getElementById('task-form2');
+        const taskTitle2 = document.getElementById('task-title2');
+        const taskPriority2 = document.getElementById('task-priority2');
+        const createTaskBtn2 = document.getElementById('create-task2');
+        const result2 = document.getElementById('result2');
+        const taskList2 = document.getElementById('task-list2');
+        
+        // User 1 state
+        let user1 = null;
+        let token1 = null;
+        
+        // User 2 state
+        let user2 = null;
+        let token2 = null;
+        
+        // User 1 event listeners
+        loginBtn1.addEventListener('click', () => login(1));
+        logoutBtn1.addEventListener('click', () => logout(1));
+        createTaskBtn1.addEventListener('click', () => createTask(1));
+        
+        // User 2 event listeners
+        loginBtn2.addEventListener('click', () => login(2));
+        logoutBtn2.addEventListener('click', () => logout(2));
+        createTaskBtn2.addEventListener('click', () => createTask(2));
+        
+        // Login function
+        async function login(userNum) {
+            const usernameEl = userNum === 1 ? username1 : username2;
+            const passwordEl = userNum === 1 ? password1 : password2;
+            const resultEl = userNum === 1 ? result1 : result2;
+            
+            try {
+                resultEl.innerHTML = '<div class="info">Logging in...</div>';
+                
+                const response = await fetch(`${API_URL}/api/auth/direct-login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: usernameEl.value,
+                        password: passwordEl.value
+                    }),
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Login failed: ${response.status} ${errorText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (userNum === 1) {
+                    user1 = data;
+                    token1 = data.token;
+                    userName1.textContent = data.username;
+                    userInfo1.style.display = 'block';
+                    taskForm1.style.display = 'block';
+                } else {
+                    user2 = data;
+                    token2 = data.token;
+                    userName2.textContent = data.username;
+                    userInfo2.style.display = 'block';
+                    taskForm2.style.display = 'block';
+                }
+                
+                resultEl.innerHTML = '<div class="success">Login successful!</div>';
+                fetchTasks(userNum);
+                
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Logout function
+        function logout(userNum) {
+            if (userNum === 1) {
+                user1 = null;
+                token1 = null;
+                userInfo1.style.display = 'none';
+                taskForm1.style.display = 'none';
+                taskList1.innerHTML = '<p>Login to see tasks...</p>';
+            } else {
+                user2 = null;
+                token2 = null;
+                userInfo2.style.display = 'none';
+                taskForm2.style.display = 'none';
+                taskList2.innerHTML = '<p>Login to see tasks...</p>';
+            }
+            
+            const resultEl = userNum === 1 ? result1 : result2;
+            resultEl.innerHTML = '<div class="success">Logged out successfully</div>';
+        }
+        
+        // Create task function
+        async function createTask(userNum) {
+            const titleEl = userNum === 1 ? taskTitle1 : taskTitle2;
+            const priorityEl = userNum === 1 ? taskPriority1 : taskPriority2;
+            const resultEl = userNum === 1 ? result1 : result2;
+            const token = userNum === 1 ? token1 : token2;
+            
+            if (!token) {
+                resultEl.innerHTML = '<div class="error">You must be logged in to create tasks</div>';
+                return;
+            }
+            
+            if (!titleEl.value.trim()) {
+                resultEl.innerHTML = '<div class="error">Task title is required</div>';
+                return;
+            }
+            
+            try {
+                resultEl.innerHTML = '<div class="info">Creating task...</div>';
+                
+                const response = await fetch(`${API_URL}/api/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        title: titleEl.value,
+                        description: `Task created by User ${userNum}`,
+                        priority: priorityEl.value,
+                        status: 'PENDING'
+                    }),
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Failed to create task: ${response.status} ${errorText}`);
+                }
+                
+                const data = await response.json();
+                resultEl.innerHTML = '<div class="success">Task created successfully!</div>';
+                
+                // Clear form
+                titleEl.value = '';
+                
+                // Refresh tasks
+                fetchTasks(userNum);
+                
+            } catch (error) {
+                resultEl.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Fetch tasks function
+        async function fetchTasks(userNum) {
+            const taskListEl = userNum === 1 ? taskList1 : taskList2;
+            const resultEl = userNum === 1 ? result1 : result2;
+            const token = userNum === 1 ? token1 : token2;
+            
+            if (!token) {
+                return;
+            }
+            
+            try {
+                taskListEl.innerHTML = '<p>Loading tasks...</p>';
+                
+                const response = await fetch(`${API_URL}/api/tasks`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': token
+                    },
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tasks');
+                }
+                
+                const tasks = await response.json();
+                
+                // Ensure tasks is an array
+                const tasksArray = Array.isArray(tasks) ? tasks : [];
+                
+                if (tasksArray.length === 0) {
+                    taskListEl.innerHTML = '<p>No tasks found. Create your first task!</p>';
+                    return;
+                }
+                
+                let html = '<h3>Your Tasks</h3>';
+                tasksArray.forEach(task => {
+                    let priorityClass = 'priority-medium';
+                    if (task.priority === 'LOW') priorityClass = 'priority-low';
+                    if (task.priority === 'HIGH') priorityClass = 'priority-high';
+                    
+                    html += `
+                        <div class="task-item ${priorityClass}">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-description">${task.description || 'No description'}</div>
+                            <div>Priority: ${task.priority}</div>
+                        </div>
+                    `;
+                });
+                
+                taskListEl.innerHTML = html;
+                
+            } catch (error) {
+                taskListEl.innerHTML = `<div class="error">Error loading tasks: ${error.message}</div>`;
+                console.error('Error fetching tasks:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

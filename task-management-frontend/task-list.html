@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .task-list {
+            margin-top: 20px;
+        }
+        .task-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-left-width: 5px;
+        }
+        .priority-border-low {
+            border-left-color: #8BC34A;
+        }
+        .priority-border-medium {
+            border-left-color: #FF9800;
+        }
+        .priority-border-high {
+            border-left-color: #F44336;
+        }
+        .priority-border-urgent {
+            border-left-color: #9C27B0;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 18px;
+            flex-grow: 1;
+        }
+        .task-priority-badge {
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .task-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .task-status {
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: white;
+        }
+        .status-pending {
+            background-color: #FFC107;
+        }
+        .status-in-progress {
+            background-color: #2196F3;
+        }
+        .status-completed {
+            background-color: #4CAF50;
+        }
+        .status-cancelled {
+            background-color: #F44336;
+        }
+        .task-priority {
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: white;
+        }
+        .priority-low {
+            background-color: #8BC34A;
+        }
+        .priority-medium {
+            background-color: #FF9800;
+        }
+        .priority-high {
+            background-color: #F44336;
+        }
+        .priority-urgent {
+            background-color: #9C27B0;
+        }
+        .error-message {
+            color: red;
+            padding: 15px;
+            border: 1px solid red;
+            border-radius: 5px;
+            background-color: #ffeeee;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .refresh-button {
+            background-color: #2196F3;
+        }
+        .refresh-button:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task List</h1>
+    
+    <div>
+        <a href="task-test.html" class="button">Create New Task</a>
+        <button id="refreshButton" class="button refresh-button">Refresh List</button>
+    </div>
+    
+    <div id="taskList" class="task-list">
+        Loading tasks...
+    </div>
+    
+    <script>
+        // Function to get status class
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'IN_PROGRESS': return 'status-in-progress';
+                case 'COMPLETED': return 'status-completed';
+                case 'CANCELLED': return 'status-cancelled';
+                default: return '';
+            }
+        }
+        
+        // Function to get priority class
+        function getPriorityClass(priority) {
+            switch(priority) {
+                case 'LOW': return 'priority-low';
+                case 'MEDIUM': return 'priority-medium';
+                case 'HIGH': return 'priority-high';
+                case 'URGENT': return 'priority-urgent';
+                default: return '';
+            }
+        }
+        
+        // Function to format date
+        function formatDate(dateString) {
+            if (!dateString) return 'Not set';
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+        
+        // Function to load tasks
+        async function loadTasks() {
+            const taskListDiv = document.getElementById('taskList');
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/tasks', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    const tasks = await response.json();
+                    
+                    // Ensure tasks is an array
+                    const tasksArray = Array.isArray(tasks) ? tasks : [];
+                    
+                    if (tasksArray.length === 0) {
+                        taskListDiv.innerHTML = '<p>No tasks found. Create your first task!</p>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    tasksArray.forEach(task => {
+                        html += `
+                            <div class="task-item priority-border-${task.priority ? task.priority.toLowerCase() : 'medium'}">
+                                <div class="task-header">
+                                    <div class="task-title">${task.title}</div>
+                                    <div class="task-priority-badge ${getPriorityClass(task.priority)}">${task.priority || 'MEDIUM'}</div>
+                                </div>
+                                <div class="task-description">${task.description || 'No description'}</div>
+                                <div class="task-meta">
+                                    <div>
+                                        <span class="task-status ${getStatusClass(task.status)}">${task.status || 'PENDING'}</span>
+                                    </div>
+                                    <div>Due: ${formatDate(task.dueDate)}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    taskListDiv.innerHTML = html;
+                } else {
+                    const errorText = await response.text();
+                    taskListDiv.innerHTML = `
+                        <div class="error-message">
+                            <h3>Error loading tasks: ${response.status}</h3>
+                            <p>${errorText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                taskListDiv.innerHTML = `
+                    <div class="error-message">
+                        <h3>Error loading tasks</h3>
+                        <p>${error.message}</p>
+                        <p>Make sure the API server is running on http://localhost:9000</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load tasks when page loads
+        document.addEventListener('DOMContentLoaded', loadTasks);
+        
+        // Refresh button
+        document.getElementById('refreshButton').addEventListener('click', loadTasks);
+    </script>
+</body>
+</html> 

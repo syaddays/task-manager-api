@@ -1,0 +1,3 @@
+@echo off
+echo Running API Test...
+powershell -ExecutionPolicy Bypass -File "%~dp0\api-test.ps1" 
